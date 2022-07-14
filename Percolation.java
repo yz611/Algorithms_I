@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
@@ -26,29 +27,12 @@ public class Percolation {
         if (row <= 0 || row > size || col <= 0 || col > size) {
             throw new IllegalArgumentException("row, col indices between 1 and n");
         }
+        if (isOpen(row, col))
+            return;
         open[row - 1][col - 1] = true;
         nOpen++;
         if (row == 1) {
             uf.union(0, col);
-            if (col == 1) {
-                if (isOpen(1, 2))
-                    uf.union(1, 2);
-                if (isOpen(2, 1))
-                    uf.union(1, size + 1);
-                return;
-            }
-            if (col == size) {
-                if (isOpen(1, size - 1))
-                    uf.union(size, size - 1);
-                if (isOpen(2, size))
-                    uf.union(size, 2 * size);
-                return;
-            }
-
-            if (isOpen(1, col - 1))
-                uf.union(col, col - 1);
-            if (isOpen(1, col + 1))
-                uf.union(col, col + 1);
             if (isOpen(2, col))
                 uf.union(col, size + col);
             return;
@@ -57,28 +41,8 @@ public class Percolation {
 
         if (row == size) {
             uf.union(number + 1, number - size + col);
-            if (col == 1) {
-                if (isOpen(size, 2))
-                    uf.union(number - 2 * size, number - size + 2);
-                if (isOpen(size - 1, 1))
-                    uf.union(number - 2 * size, number - 2 * size + 1);
-                return;
-            }
-
-            if (col == size) {
-                if (isOpen(size, size - 1))
-                    uf.union(number, number - 1);
-                if (isOpen(size - 1, size))
-                    uf.union(number, number - size);
-                return;
-            }
-
-            if (isOpen(size, col - 1))
-                uf.union(number - size + col, number - size + col - 1);
-            if (isOpen(size, col + 1))
-                uf.union(number - size + col, number - 2 * size + col);
             if (isOpen(size - 1, col))
-                uf.union(number - size + col, number - size + col);
+                uf.union(number - size + col, number - 2 * size + col);
             return;
 
 
@@ -164,6 +128,22 @@ public class Percolation {
         StdOut.println(perc.isFull(3, 6));
         StdOut.println(perc.isFull(1, 3));
         StdOut.println(perc.isOpen(3, 6));
+        int n = perc.size;
+        int number = perc.number;
 
+        for (int tr = 0; tr < Integer.parseInt(args[1]); tr++) {
+            int row, col;
+            int rd = StdRandom.uniform(1, number + 1);
+            if (rd % n != 0) {
+                row = rd / n + 1;
+                col = rd % n;
+            }
+            else {
+                row = rd / n;
+                col = n;
+            }
+            perc.open(row, col);
+        }
+        StdOut.println(perc.numberOfOpenSites());
     }
 }

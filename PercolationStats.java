@@ -8,14 +8,24 @@ public class PercolationStats {
 
     // perform independent trials on an n-by-n grid
     public PercolationStats(int n, int trials) {
+        if (n < 0 || trials < 0) {
+            throw new IllegalArgumentException("both values must be positive");
+        }
         int number = n * n;
         prediction = new double[trials];
         for (int tr = 0; tr < trials; tr++) {
             Percolation perc = new Percolation(n);
             while (!perc.percolates()) {
-                int rd = StdRandom.uniform(number - 1);
-                int row = rd / n + 1;
-                int col = rd % n + 1;
+                int rd = StdRandom.uniform(1, number);
+                int row, col;
+                if (rd % n != 0) {
+                    row = rd / n + 1;
+                    col = rd % n;
+                }
+                else {
+                    row = rd / n;
+                    col = n;
+                }
                 if (!perc.isOpen(row, col)) {
                     perc.open(row, col);
                 }
@@ -47,10 +57,8 @@ public class PercolationStats {
 
     // test client (see below)
     public static void main(String[] args) {
-        int n = Integer.parseInt(args[0]);
-        int t = Integer.parseInt(args[1]);
-        PercolationStats percStats = new PercolationStats(n, t);
-
+        PercolationStats percStats = new PercolationStats(Integer.parseInt(args[0]),
+                                                          Integer.parseInt(args[1]));
         StdOut.println("mean                    = " + percStats.mean());
         StdOut.println("stddev                  = " + percStats.stddev());
         StdOut.println("95% confidence interval = [" + percStats.confidenceLo() + ", " +
