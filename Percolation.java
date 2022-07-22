@@ -3,11 +3,11 @@ import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    private int size;
+    private final int size;
     private int nOpen;
-    private int number;
+    private final int number;
     private boolean[][] open;
-    private WeightedQuickUnionUF uf;
+    private final WeightedQuickUnionUF uf;
 
 
     // creates n-by-n grid, with all sites initially blocked
